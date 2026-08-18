@@ -37,7 +37,8 @@
     "cordis": "4.0.0-rc.8"
   },
   "devDependencies": {
-    "cordis": "4.0.0-rc.8"
+    "cordis": "4.0.0-rc.8",
+    "schemastery": "^3.18.0"
   },
   "engines": {
     "node": ">=20"

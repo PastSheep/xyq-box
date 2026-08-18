@@ -1,0 +1,91 @@
+
+/* @xyq-box/plugin-settings —— 设置面板样式 */
+
+.xyq-settings {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--xyq-fg, #222);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: auto;
+}
+
+.xyq-settings-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.xyq-settings-hint {
+  margin: 0 0 4px;
+  color: var(--xyq-fg-dim, #888);
+  font-size: 12px;
+}
+
+.xyq-settings-plugin {
+  border: 1px solid var(--xyq-border, #ddd);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin: 0;
+}
+
+.xyq-settings-plugin-name {
+  font-weight: 600;
+  font-size: 12px;
+  padding: 0 6px;
+  color: var(--xyq-fg-dim, #666);
+}
+
+.xyq-settings-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.xyq-settings-field input[type='text'],
+.xyq-settings-field input[type='number'],
+.xyq-settings-field select,
+.xyq-settings-field textarea {
+  flex: 1;
+  min-width: 0;
+  padding: 3px 6px;
+  border: 1px solid var(--xyq-border, #ccc);
+  border-radius: 4px;
+  background: var(--xyq-bg, #fff);
+  color: var(--xyq-fg, #222);
+}
+
+.xyq-settings-label {
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.xyq-settings-desc {
+  flex: 1;
+  color: var(--xyq-fg-dim, #888);
+  font-size: 11px;
+}
+
+.xyq-settings-group {
+  border: 1px dashed var(--xyq-border, #ddd);
+  border-radius: 4px;
+  padding: 6px 8px;
+  margin: 4px 0;
+}
+
+.xyq-settings-saving {
+  font-size: 11px;
+  color: var(--xyq-fg-dim, #888);
+}
+
+.xyq-settings-error {
+  font-size: 11px;
+  color: #c0392b;
+}
+
+.xyq-settings--empty {
+  color: var(--xyq-fg-dim, #888);
+  padding: 12px;
+}

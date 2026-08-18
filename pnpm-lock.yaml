@@ -103,6 +103,9 @@ importers:
       cordis:
         specifier: 4.0.0-rc.8
         version: 4.0.0-rc.8
+      schemastery:
+        specifier: ^3.18.0
+        version: 3.18.0
 
   packages/plugins/diagnostics:
     dependencies:
@@ -207,6 +210,9 @@ importers:
       '@xyq-box/sdk':
         specifier: workspace:*
         version: link:../../sdk
+      schemastery:
+        specifier: ^3.18.0
+        version: 3.18.0
     devDependencies:
       '@types/react':
         specifier: ^18.3.1
