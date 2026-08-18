@@ -1,0 +1,23 @@
+{
+  "name": "@xyq-box/xyq",
+  "version": "0.1.0",
+  "description": "xyq-box 命令行入口：xyq dev / build / create / verify",
+  "type": "module",
+  "bin": {
+    "xyq": "./lib/cli.js"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "cli": "node lib/cli.js"
+  },
+  "dependencies": {
+    "@xyq-box/core": "workspace:*"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

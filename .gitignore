@@ -1,9 +1,11 @@
 # dependencies
 node_modules/
+.pnpm-store/
 
 # build output
 dist/
 build/
+lib/
 *.tsbuildinfo
 
 # packaging

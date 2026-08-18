@@ -1,0 +1,45 @@
+{
+  "name": "@xyq-box/plugin-config",
+  "version": "0.1.0",
+  "description": "配置服务：按插件名分片读写与订阅（docs/04）",
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
+  "files": [
+    "lib"
+  ],
+  "xyqBox": {
+    "id": "@xyq-box/plugin-config",
+    "title": "配置服务",
+    "description": "配置服务：按插件名分片读写与订阅（docs/04）",
+    "author": "xyq-box team",
+    "license": "MIT",
+    "engine": {
+      "xyqBox": "^0.1.0",
+      "cordis": "^4.0.0"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@xyq-box/core": "workspace:*",
+    "@xyq-box/sdk": "workspace:*"
+  },
+  "peerDependencies": {
+    "cordis": "4.0.0-rc.8"
+  },
+  "devDependencies": {
+    "cordis": "4.0.0-rc.8"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

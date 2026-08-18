@@ -1,0 +1,10 @@
+# pnpm workspaces（docs/05 §2：Monorepo 布局）
+packages:
+  - packages/*
+  - packages/plugins/*
+  - apps/*
+
+# pnpm 11 构建脚本白名单（pnpm 设置已从 package.json 迁移到本文件）
+onlyBuiltDependencies:
+  - esbuild
+

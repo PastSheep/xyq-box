@@ -1,0 +1,51 @@
+{
+  "name": "@xyq-box/plugin-shell-web",
+  "version": "0.1.0",
+  "description": "Web 壳插件（M1：Vite 壳 + 内核 HMR）",
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
+  "files": [
+    "lib"
+  ],
+  "xyqBox": {
+    "id": "@xyq-box/plugin-shell-web",
+    "title": "Web 壳插件",
+    "description": "Web 壳插件（M1：Vite 壳 + 内核 HMR）",
+    "author": "xyq-box team",
+    "license": "MIT",
+    "engine": {
+      "xyqBox": "^0.1.0",
+      "cordis": "^4.0.0"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@xyq-box/core": "workspace:*",
+    "@xyq-box/sdk": "workspace:*"
+  },
+  "peerDependencies": {
+    "cordis": "4.0.0-rc.8",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "cordis": "4.0.0-rc.8",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

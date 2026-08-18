@@ -1,0 +1,51 @@
+{
+  "name": "@xyq-box/plugin-diagnostics",
+  "version": "0.1.0",
+  "description": "插件状态面板：fiber 状态 / 依赖图 / 错误",
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
+  "files": [
+    "lib"
+  ],
+  "xyqBox": {
+    "id": "@xyq-box/plugin-diagnostics",
+    "title": "插件状态面板",
+    "description": "插件状态面板：fiber 状态 / 依赖图 / 错误",
+    "author": "xyq-box team",
+    "license": "MIT",
+    "engine": {
+      "xyqBox": "^0.1.0",
+      "cordis": "^4.0.0"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@xyq-box/core": "workspace:*",
+    "@xyq-box/sdk": "workspace:*"
+  },
+  "peerDependencies": {
+    "cordis": "4.0.0-rc.8",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "cordis": "4.0.0-rc.8",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

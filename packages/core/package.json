@@ -1,0 +1,31 @@
+{
+  "name": "@xyq-box/core",
+  "version": "0.1.0",
+  "description": "xyq-box 内核：引导、插件管理器、清单加载器、配置仓库",
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "cordis": "4.0.0-rc.8",
+    "schemastery": "^3.18.0"
+  },
+  "devDependencies": {
+    "@standard-schema/spec": "^1.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
