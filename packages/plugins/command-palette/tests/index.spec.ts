@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /**
  * @xyq-box/plugin-command-palette —— 单测
  *

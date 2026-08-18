@@ -18,7 +18,7 @@ export interface RootSlotRendererProps {
 
 /** 渲染 root slot 的第一个视图（占据者通常只有一个） */
 export function RootSlotRenderer({ ctx, fallback }: RootSlotRendererProps) {
-  const [tick, setTick] = useState(0)
+  const [tick] = useState(0)
   const [rootView, setRootView] = useState<ViewDescriptorLike | null>(null)
 
   useEffect(() => {

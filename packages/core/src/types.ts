@@ -27,6 +27,13 @@ export interface BootstrapOptions {
    * 浏览器端：由 Vite 生成的「插件名 → 动态 import」注册表驱动（见 plugin-shell-web 的 vite 插件）。
    */
   loader?: (name: string) => Promise<Record<string, unknown>>
+  /**
+   * 自定义 connection 服务工厂（可选，docs/02 §3.1「传输实现可换」）。
+   * 缺省：进程内直通（ConnectionServiceImpl）。
+   * 桌面部署（Electron）：渲染进程经 preload 注入的 IPC 桥传入 IPC 传输实现，
+   * 插件调用 API 完全不变（docs/04 §8）。
+   */
+  connection?: (ctx: import('cordis').Context) => ConnectionService
 }
 
 // ─── 插件清单（plugins.json） ────────────────────────────────────────────────
@@ -112,6 +119,11 @@ export interface ConnectionService {
   push(channel: string, event: string, payload?: unknown): void
   /** 订阅推送事件（effect 语义） */
   onPush(channel: string, handler: (event: string, payload: unknown) => void): () => void
+  /**
+   * 注册推送事件跨进程转发器（可选，桌面 IPC 传输用：主进程 → 渲染进程）。
+   * 返回退订函数。
+   */
+  onPushRelay?(relay: (channel: string, event: string, payload: unknown) => void): () => void
 }
 
 // ─── 内核内部符号 ────────────────────────────────────────────────────────────

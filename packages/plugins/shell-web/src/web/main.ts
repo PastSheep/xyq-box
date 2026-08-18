@@ -7,12 +7,19 @@
  *
  * 内核 HMR：plugins.json 变更 → 热重载全部已装载插件；
  * 插件代码变更 → Vite 动态 import 更新，经重载拾取新模块（未 accept 的模块整页刷新）。
+ *
+ * 传输适配（docs/02 §3.1「传输实现可换」）：
+ * - 浏览器部署：无 window.xyqBridge → 使用 core 默认进程内直通 connection；
+ * - Electron 桌面部署：plugin-shell-desktop 的 preload 注入 window.xyqBridge，
+ *   本入口把 connection 换成 IpcConnectionService（Electron IPC 传输），
+ *   同一份打包产物两种部署形态，插件代码零感知（docs/04 §8）。
  */
 
 import { bootstrap, type KernelHandle } from '@xyq-box/core'
 import { manifest, registry } from 'virtual:xyq-plugins'
 
 import '../ui/shell.css'
+import { detectBridge, IpcConnectionService } from './ipc-connection.js'
 
 declare global {
   interface Window {
@@ -33,15 +40,18 @@ async function loadPluginModule(name: string): Promise<Record<string, unknown>> 
 }
 
 async function boot(): Promise<void> {
+  // 传输注入：桌面部署（Electron）时 preload 已注入 window.xyqBridge
+  const bridge = detectBridge()
   const kernel = await bootstrap({
     basePath: import.meta.env.BASE_URL,
     manifest,
     loader: loadPluginModule,
+    connection: bridge ? (ctx) => new IpcConnectionService(ctx, bridge) : undefined,
   })
   window.__xyqKernel = kernel
-  console.info(
-    `[xyq] kernel v${kernel.version} booted, ${kernel.plugins.getStatus().length} plugin(s)`,
-  )
+  const transport = bridge ? 'electron-ipc' : 'in-process'
+  console.info('[xyq] kernel v' + kernel.version + ' booted over ' + transport + ', ' +
+    kernel.plugins.getStatus().length + ' plugin(s)')
 }
 
 boot().catch((error: unknown) => {

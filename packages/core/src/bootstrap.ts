@@ -38,7 +38,13 @@ export async function bootstrap(options: BootstrapOptions = {}): Promise<KernelH
   ctx.logger.info(`[kernel] booting xyq-box v${version} (profile: ${profile})`)
 
   // 2. 注册内置 service（connection 是内核与部署入口的通信契约，docs/04 §8）
-  provideConnection(ctx)
+  //    传输实现可换（docs/02 §3.1）：部署入口可注入自定义 connection
+  //    （如桌面渲染进程的 Electron IPC 传输），缺省进程内直通。
+  if (options.connection) {
+    options.connection(ctx)
+  } else {
+    provideConnection(ctx)
+  }
 
   // 3. 创建插件管理器（浏览器端注入清单来源与模块加载器，见 BootstrapOptions）
   const plugins = createPluginManager(ctx, basePath, {

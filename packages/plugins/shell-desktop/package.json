@@ -1,45 +1,72 @@
 {
   "name": "@xyq-box/plugin-shell-desktop",
   "version": "0.1.0",
-  "description": "Electron 桌面壳插件（M2）",
+  "description": "Electron 桌面壳插件（M2）：主进程 bootstrap + BrowserWindow，提供 system/window/tray 服务，connection 走 Electron IPC，复用 shell-web 的 UI",
   "type": "module",
-  "main": "./lib/index.js",
+  "main": "./lib/main.js",
   "types": "./lib/index.d.ts",
   "exports": {
     ".": {
       "types": "./lib/index.d.ts",
       "default": "./lib/index.js"
+    },
+    "./main": {
+      "types": "./lib/main.d.ts",
+      "default": "./lib/main.js"
+    },
+    "./preload": {
+      "types": "./lib/preload.d.ts",
+      "default": "./lib/preload.mjs"
     }
   },
   "files": [
-    "lib"
+    "lib",
+    "plugins.json",
+    "README.md"
   ],
   "xyqBox": {
     "id": "@xyq-box/plugin-shell-desktop",
-    "title": "Electron 壳插件",
-    "description": "Electron 桌面壳插件（M2）",
+    "title": "Electron 桌面壳插件",
+    "description": "Electron 桌面壳插件（M2）：主进程 bootstrap + BrowserWindow，system/window/tray 服务，connection 走 Electron IPC，复用 shell-web UI",
     "author": "xyq-box team",
     "license": "MIT",
     "engine": {
       "xyqBox": "^0.1.0",
       "cordis": "^4.0.0"
-    }
+    },
+    "permissions": [],
+    "entry": {
+      "node": "lib/index.js"
+    },
+    "provides": [
+      "system",
+      "window",
+      "tray"
+    ],
+    "requires": [
+      "connection"
+    ]
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "typecheck": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.build.json && node scripts/build-preload.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "start": "electron ."
   },
   "dependencies": {
     "@xyq-box/core": "workspace:*",
-    "@xyq-box/sdk": "workspace:*"
+    "@xyq-box/sdk": "workspace:*",
+    "schemastery": "^3.18.0"
   },
   "peerDependencies": {
     "cordis": "4.0.0-rc.8",
+    "electron": "^43.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
   "devDependencies": {
     "cordis": "4.0.0-rc.8",
+    "electron": "^43.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "@types/react": "^18.3.1",

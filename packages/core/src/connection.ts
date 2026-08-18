@@ -27,6 +27,9 @@ export class ConnectionServiceImpl extends Service implements ConnectionService 
   /** 推送事件订阅者 */
   private pushListeners = new Map<string, Set<(event: string, payload: unknown) => void>>()
 
+  /** 跨进程推送转发（桌面 IPC 传输用：主进程 → 渲染进程） */
+  private pushRelays = new Set<(channel: string, event: string, payload: unknown) => void>()
+
   rpc = {
     handle: (
       channel: string,
@@ -71,10 +74,24 @@ export class ConnectionServiceImpl extends Service implements ConnectionService 
   }
 
   push(channel: string, event: string, payload?: unknown): void {
+    const value = payload ?? null
     const listeners = this.pushListeners.get(channel)
-    if (!listeners) return
-    for (const listener of [...listeners]) {
-      listener(event, payload ?? null)
+    if (listeners) {
+      for (const listener of [...listeners]) {
+        listener(event, value)
+      }
+    }
+    // 跨进程转发（桌面 IPC 传输，effect 注册于插件卸载自动撤销）
+    for (const relay of [...this.pushRelays]) {
+      relay(channel, event, value)
+    }
+  }
+
+  /** 注册推送事件跨进程转发器（返回退订函数；桌面传输用） */
+  onPushRelay(relay: (channel: string, event: string, payload: unknown) => void): () => void {
+    this.pushRelays.add(relay)
+    return () => {
+      this.pushRelays.delete(relay)
     }
   }
 
@@ -100,3 +117,12 @@ export class ConnectionServiceImpl extends Service implements ConnectionService 
 export function provideConnection(ctx: Context): ConnectionServiceImpl {
   return new ConnectionServiceImpl(ctx)
 }
+
+// ─── 类型声明合并（docs/03 §4：服务名扁平命名空间） ───────────────────────────
+
+declare module 'cordis' {
+  interface Context {
+    connection: ConnectionService
+  }
+}
+

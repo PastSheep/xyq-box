@@ -13,7 +13,7 @@
  * - 订阅：views.onChange 与 layout.onChange 驱动重渲染。
  */
 
-import { useEffect, useState, type ReactNode } from 'react'
+import { createElement, useEffect, useState, type ReactNode } from 'react'
 
 // ─── 结构类型（不依赖 shell-web / views 实现，docs/05 §2） ──────────────────
 
@@ -75,8 +75,7 @@ function renderView(descriptor: LayoutViewDescriptor, props: PanelContainerProps
   const viewContext = buildViewContext(descriptor, props)
   if (descriptor.component) {
     const Component = descriptor.component as React.ComponentType<Record<string, unknown>>
-    const React = require('react') as typeof import('react')
-    return React.createElement(Component, viewContext)
+    return createElement(Component, viewContext)
   }
   if (descriptor.render) {
     return descriptor.render(viewContext) as ReactNode

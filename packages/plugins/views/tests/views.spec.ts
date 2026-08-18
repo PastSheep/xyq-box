@@ -10,7 +10,7 @@
  * - 插件卸载自动清理
  */
 
-import { Context, Service } from 'cordis'
+import { Context } from 'cordis'
 import { describe, expect, it, beforeEach, afterEach } from 'vitest'
 
 import { ViewsServiceImpl, type ViewsService, type ViewDescriptor } from '../src/index.js'

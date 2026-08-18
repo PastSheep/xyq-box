@@ -10,10 +10,8 @@
  * - 所有注册均为 effect 语义，插件卸载自动清理。
  */
 
-import { createElement } from 'react'
 import type { Context } from 'cordis'
 import Schema from 'schemastery'
-import { defineView } from '@xyq-box/sdk'
 
 import { LayoutServiceImpl } from './layout.js'
 import { PanelContainer } from './ui/PanelContainer.js'
