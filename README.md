@@ -23,7 +23,8 @@
 | [docs/03-插件规范.md](docs/03-插件规范.md) | 插件包结构、manifest、入口约定、服务契约、配置 schema、分发与版本兼容 |
 | [docs/04-核心服务设计.md](docs/04-核心服务设计.md) | config / logger / storage / views / commands / permissions 等核心服务接口草案 |
 | [docs/05-技术选型与仓库结构.md](docs/05-技术选型与仓库结构.md) | 依赖选型、monorepo 布局、工具链与 CI |
-| [docs/06-里程碑与开放问题.md](docs/06-里程碑与开放问题.md) | M0–M4 路线图与待决策清单（ADR） |
+| [docs/06-里程碑与开放问题.md](docs/06-里程碑与开放问题.md) | M0–M4 路线图与决策记录（ADR） |
+| [docs/07-任务看板协作方案.md](docs/07-任务看板协作方案.md) | 用 DSH 任务看板驱动项目开发：卡片种子、执行目标、定时任务 |
 
 ## 当前状态
 
