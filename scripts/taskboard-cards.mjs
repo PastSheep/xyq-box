@@ -146,7 +146,7 @@ export const CARDS = [
       '2. ctx.views.list(slot) 与 onChange 订阅；\n' +
       '3. plugin-layout 占据 root slot，渲染面板容器（拖拽停靠、折叠、布局持久化）；\n' +
       '4. 支持 slot：sidebar / panel / toolbar / statusbar。\n' +
-      '完成后 git add -A && git commit -m \'feat: M1 面板系统\' && git push。',
+      '完成后 git add -A && git commit -m \'feat: M1 面板系统\'；git push 仅做基础尝试，可暂缓。',
     { permission: 'workspace-write' }),
 
   card('m1-03-commands', 'M1 · 命令面板',
@@ -155,7 +155,7 @@ export const CARDS = [
       '1. ctx.commands.register(command) 注册命令（title/shortcut/run/when）；\n' +
       '2. ctx.commands.run(id) 执行命令；\n' +
       '3. command-palette 插件：Ctrl+K 弹出搜索/执行面板。\n' +
-      '完成后 git add -A && git commit -m \'feat: M1 命令面板\' && git push。',
+      '完成后 git add -A && git commit -m \'feat: M1 命令面板\'；git push 仅做基础尝试，可暂缓。',
     { permission: 'workspace-write' }),
 
   card('m1-04-settings', 'M1 · 设置 UI',
@@ -164,7 +164,7 @@ export const CARDS = [
       '1. ctx.config 服务：按插件名分片读写、onChange 订阅、变更即热重载（HMR 语义）；\n' +
       '2. settings 插件：按插件 Config schema 自动生成设置表单 UI；\n' +
       '3. 持久化委托 storage 服务。\n' +
-      '完成后 git add -A && git commit -m \'feat: M1 设置 UI\' && git push。',
+      '完成后 git add -A && git commit -m \'feat: M1 设置 UI\'；git push 仅做基础尝试，可暂缓。',
     { permission: 'workspace-write' }),
 
   card('m1-05-diagnostics', 'M1 · 诊断面板',
@@ -174,7 +174,7 @@ export const CARDS = [
       '2. 渲染面板：插件列表（名称/状态/状态标签/依赖/错误）；\n' +
       '3. 日志实时流（消费 logger 的环形缓冲 sink）；\n' +
       '4. 依赖图可视化（可选）。\n' +
-      '完成后 git add -A && git commit -m \'feat: M1 诊断面板\' && git push。',
+      '完成后 git add -A && git commit -m \'feat: M1 诊断面板\'；git push 仅做基础尝试，可暂缓。',
     { permission: 'workspace-write' }),
 
   card('m1-06-acceptance', 'M1 · 验收（只读）',
