@@ -136,8 +136,15 @@ async function main() {
     if (!js) fail('--exec 需要提供 JS 表达式')
     const value = await evaluate(cdp, js)
     log('返回值:', JSON.stringify(value))
+  } else if (mode === '--exec-file') {
+    const path = process.argv[3]
+    if (!path) fail('--exec-file 需要提供文件路径')
+    const { readFileSync } = await import('node:fs')
+    const js = readFileSync(path, 'utf-8')
+    const value = await evaluate(cdp, js)
+    log('返回值:', JSON.stringify(value))
   } else {
-    fail('用法: --seed | --read | --exec <js> | --list')
+    fail('用法: --seed | --read | --exec <js> | --exec-file <path> | --list')
   }
 
   cdp.close()

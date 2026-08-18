@@ -191,7 +191,61 @@ export const CARDS = [
     '每晚 23:00 自动生成 M1 开发进度报告（cron 0 23 * * *，只读）。',
     '为 E:\\Projects\\xyq-box 生成 M1 开发进度报告：git log --oneline -10、git status、看板 M1 卡片状态、已实现/未实现对照 docs/06 M1 清单。只读，不修改文件。',
     { permission: 'read-only', status: 'backlog', schedule: { enabled: true, cron: '0 23 * * *' } }),
-]
+
+  // ──── M2：桌面壳（docs/06） ────
+
+  card('m2-01-shell-desktop', 'M2 · 桌面壳插件',
+    'plugin-shell-desktop（Electron）：主进程 bootstrap + 窗口，system/window/tray 服务，connection 走 IPC。',
+    '在 E:\\Projects\\xyq-box 实现 @xyq-box/plugin-shell-desktop（packages/plugins/shell-desktop）：\n' +
+      '1. Electron 主进程：调用 kernel.bootstrap() 启动内核 + 创建 BrowserWindow；\n' +
+      '2. Node half 提供 system / window / tray 服务（窗口创建/托盘图标/系统能力）；\n' +
+      '3. connection 服务走 Electron IPC 传输（复用 core 的 ConnectionService 接口，替换传输层）；\n' +
+      '4. 渲染进程加载 Web 壳（复用 plugin-shell-web 的 UI）。\n' +
+      '完成后 git add -A && git commit -m \'feat: M2 桌面壳\'；git push 仅做基础尝试，可暂缓。',
+    { permission: 'workspace-write' }),
+
+  card('m2-02-storage-desktop', 'M2 · 桌面持久化',
+    'storage 桌面实现（用户数据目录 + 真实 fs）；logger 文件 sink。',
+    '在 E:\\Projects\\xyq-box 实现桌面端持久化：\n' +
+      '1. storage 桌面实现：替换默认 storage 为「用户数据目录 JSON 文件 + 真实文件系统」；\n' +
+      '2. logger 文件 sink：追加写日志到用户数据目录（可裁剪）；\n' +
+      '3. 通过服务替换机制（卸载 web storage provider、装载桌面 provider）验证消费者零改动重连。\n' +
+      '完成后 git add -A && git commit -m \'feat: M2 桌面持久化\'；git push 仅做基础尝试，可暂缓。',
+    { permission: 'workspace-write' }),
+
+  card('m2-03-tray-updater', 'M2 · 托盘/窗口/自动更新',
+    '托盘、窗口状态持久化、electron-updater 自动更新。',
+    '在 E:\\Projects\\xyq-box 实现桌面壳增强：\n' +
+      '1. 系统托盘（图标/菜单：显示主窗口/退出）；\n' +
+      '2. 窗口状态持久化（尺寸/位置，关闭时保存，启动时恢复）；\n' +
+      '3. electron-updater 自动更新接入（主进程检查/下载/安装）。\n' +
+      '完成后 git add -A && git commit -m \'feat: M2 托盘与自动更新\'；git push 仅做基础尝试，可暂缓。',
+    { permission: 'workspace-write' }),
+
+  card('m2-04-packaging', 'M2 · 打包分发',
+    'electron-builder：nsis（Win）/ dmg（mac）/ AppImage（Linux）+ 签名。',
+    '在 E:\\Projects\\xyq-box 配置 electron-builder 打包：\n' +
+      '1. nsis（Windows 安装包）/ dmg（macOS）/ AppImage（Linux）三平台配置；\n' +
+      '2. 应用图标与元数据；\n' +
+      '3. CI 发布工作流（可选，仓库私有时可本地打包）；\n' +
+      '4. 签名与公证（如具备证书；否则文档标注）。\n' +
+      '完成后 git add -A && git commit -m \'feat: M2 打包分发\'；git push 仅做基础尝试，可暂缓。',
+    { permission: 'danger-full-access' }),
+
+  card('m2-05-acceptance', 'M2 · 验收（只读）',
+    '桌面壳：启动内核 + 窗口 + 插件热重载 + 打包产物可运行。',
+    '在 E:\\Projects\\xyq-box 做只读验收：\n' +
+      '1. Electron 主进程启动：内核 bootstrap + 窗口出现 + 默认插件集 ACTIVE；\n' +
+      '2. 第三方风格插件在桌面环境安装/热重载/卸载闭环；\n' +
+      '3. connection 走 IPC 后 Web half 与 Node half 通信正常；\n' +
+      '4. electron-builder 打包产物可安装运行（如本机可行）；\n' +
+      '输出验收报告，不修改文件。',
+    { permission: 'read-only' }),
+
+  card('m2-06-daily-report', '定时 · 每晚 M2 进度报告',
+    '每晚 23:00 自动生成 M2 开发进度报告（cron 0 23 * * *，只读）。',
+    '为 E:\\Projects\\xyq-box 生成 M2 开发进度报告：git log --oneline -10、git status、看板 M2 卡片状态、已实现/未实现对照 docs/06 M2 清单。只读，不修改文件。',
+    { permission: 'read-only', status: 'backlog', schedule: { enabled: true, cron: '0 23 * * *' } }), ]
 
 /** 校验全部卡片；返回非法卡片 id 列表（空 = 全通过）。 */
 export function validateCards(cards = CARDS) {
