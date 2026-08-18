@@ -153,6 +153,9 @@ importers:
       '@xyq-box/sdk':
         specifier: workspace:*
         version: link:../../sdk
+      schemastery:
+        specifier: ^3.18.0
+        version: 3.18.0
     devDependencies:
       '@types/react':
         specifier: ^18.3.1
@@ -276,6 +279,9 @@ importers:
       '@xyq-box/plugin-hello':
         specifier: workspace:*
         version: link:../hello
+      '@xyq-box/plugin-layout':
+        specifier: workspace:*
+        version: link:../layout
       '@xyq-box/plugin-logger':
         specifier: workspace:*
         version: link:../logger

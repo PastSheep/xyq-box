@@ -58,6 +58,7 @@
     "@xyq-box/plugin-commands": "workspace:*",
     "@xyq-box/plugin-config": "workspace:*",
     "@xyq-box/plugin-hello": "workspace:*",
+    "@xyq-box/plugin-layout": "workspace:*",
     "@xyq-box/plugin-logger": "workspace:*",
     "@xyq-box/plugin-storage": "workspace:*",
     "@xyq-box/plugin-views": "workspace:*",

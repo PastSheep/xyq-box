@@ -3,8 +3,9 @@
  *
  * 职责（docs/02 §1、docs/06 M1）：
  * 1. 提供 system 服务（浏览器能力代理：window/document/notification 等）；
- * 2. 占据 root slot（views 服务可用时注册 root 视图描述符，docs/02 §4）；
- * 3. 渲染 React UI 根，并作为 UI 聚合器订阅 plugin-views 汇聚所有已注册视图。
+ * 2. 渲染 React UI 根，显示 root slot 的视图（由 plugin-layout 占据）；
+ *    root slot 无视图时降级渲染自身壳（ShellApp）。
+ * 3. 不再直接占据 root slot —— M1 移交给 plugin-layout。
  *
  * 遵循 docs/03-插件规范.md：
  * - views 为可选能力，经 ctx.get 探测（docs/03 §4），缺失时降级为仅渲染壳自身；
@@ -15,11 +16,10 @@ import { createElement } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import type { Context } from 'cordis'
 import Schema from 'schemastery'
-import { defineView } from '@xyq-box/sdk'
 
 import { SystemServiceImpl } from './system.js'
 import { ShellApp, ShellContext } from './ui/ShellApp.js'
-import type { ViewsServiceLike } from './types.js'
+import { RootSlotRenderer } from './ui/RootSlotRenderer.js'
 
 // ─── 配置声明（schemastery DSL，docs/03 §5） ─────────────────────────────────
 
@@ -53,25 +53,9 @@ export function apply(ctx: Context, config: Config) {
   // 2. 页面标题
   ctx.system.setTitle(config.title)
 
-  // 3. 占据 root slot：注册 root 视图描述符（views 为可选能力，docs/03 §4）
-  const views = ctx.get('views') as ViewsServiceLike | undefined
-  if (views) {
-    const descriptor = defineView({
-      slots: ['root'],
-      title: 'Web 壳',
-      icon: 'globe',
-      component: ShellApp,
-    })
-    ctx.effect(() => {
-      // sdk defineView 不含 id；views 服务要求全局唯一 id，此处补全
-      return views.register({ ...descriptor, id: '@xyq-box/plugin-shell-web/root' })
-    })
-    logger.info('registered root slot view: %s', '@xyq-box/plugin-shell-web/root')
-  } else {
-    logger.warn('views 服务不可用（plugin-views 未装载）——视图聚合降级为仅渲染壳自身')
-  }
-
-  // 4. 渲染 React UI 根（占据 root slot 的渲染层）
+  // 3. 渲染 React UI 根
+  //    RootSlotRenderer 读取 views 服务的 root slot，由 layout 插件占据；
+  //    无 root 视图时降级渲染 ShellApp（自身壳）
   const mount = typeof document === 'undefined' ? null : document.getElementById(config.mountPoint)
   if (!mount) {
     logger.error('mount point #%s not found — UI root not rendered', config.mountPoint)
@@ -80,7 +64,14 @@ export function apply(ctx: Context, config: Config) {
   const root: Root = createRoot(mount)
   ctx.effect(() => {
     root.render(
-      createElement(ShellContext.Provider, { value: ctx }, createElement(ShellApp, { config })),
+      createElement(
+        ShellContext.Provider,
+        { value: ctx },
+        createElement(RootSlotRenderer, {
+          ctx,
+          fallback: createElement(ShellApp, { config }),
+        }),
+      ),
     )
     return () => {
       root.unmount()

@@ -27,11 +27,13 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
   },
   "dependencies": {
     "@xyq-box/core": "workspace:*",
-    "@xyq-box/sdk": "workspace:*"
+    "@xyq-box/sdk": "workspace:*",
+    "schemastery": "^3.18.0"
   },
   "peerDependencies": {
     "cordis": "4.0.0-rc.8",

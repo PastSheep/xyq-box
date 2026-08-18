@@ -3,8 +3,9 @@
  *
  * 浏览器内核引导链路（Node 环境 + DOM 桩，无真实浏览器）：
  * bootstrap(manifest + loader) → 装载 shell-web → system 服务就绪 →
- * root slot 视图注册（views 桩）→ React UI 根挂载（react-dom 桩）→
- * 卸载后 system 服务消失。
+ * React UI 根挂载（react-dom 桩）→ 卸载后 system 服务消失。
+ *
+ * M1 变更：shell-web 不再占据 root slot，该职责移交给 plugin-layout。
  */
 
 import { Context } from 'cordis'
@@ -157,7 +158,7 @@ describe('浏览器内核引导（DOM 桩）', () => {
     expect(kernel.ctx.get('system')).toBeUndefined()
   })
 
-  it('views 服务可用时注册 root slot 视图（占据 root slot）', async () => {
+  it('shell-web 不再占据 root slot（M1：root slot 由 plugin-layout 占据）', async () => {
     // 先以空清单引导，注入 views 桩服务后再装载 shell-web
     const kernel = await bootstrap({
       basePath: '/',
@@ -177,12 +178,8 @@ describe('浏览器内核引导（DOM 桩）', () => {
 
     await kernel.plugins.mount('@xyq-box/plugin-shell-web')
 
-    // root slot 描述符已注册（id 全局唯一、slots 含 root、组件为 ShellApp）
-    expect(registered).toHaveLength(1)
-    const descriptor = registered[0] as { id: string; slots: string[]; component: unknown }
-    expect(descriptor.id).toBe('@xyq-box/plugin-shell-web/root')
-    expect(descriptor.slots).toContain('root')
-    expect(descriptor.component).toBeTypeOf('function')
+    // shell-web 不应向 root slot 注册视图（root slot 由 layout 插件占据）
+    expect(registered).toHaveLength(0)
 
     await kernel.plugins.unmount('@xyq-box/plugin-shell-web')
   })

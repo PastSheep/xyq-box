@@ -4,6 +4,7 @@
     { "name": "@xyq-box/plugin-config" },
     { "name": "@xyq-box/plugin-storage" },
     { "name": "@xyq-box/plugin-views" },
+    { "name": "@xyq-box/plugin-layout" },
     { "name": "@xyq-box/plugin-commands" },
     { "name": "@xyq-box/plugin-hello" },
     {
