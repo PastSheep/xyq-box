@@ -6,6 +6,7 @@
     { "name": "@xyq-box/plugin-views" },
     { "name": "@xyq-box/plugin-layout" },
     { "name": "@xyq-box/plugin-commands" },
+    { "name": "@xyq-box/plugin-command-palette" },
     { "name": "@xyq-box/plugin-hello" },
     {
       "name": "@xyq-box/plugin-shell-web",
