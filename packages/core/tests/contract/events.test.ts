@@ -13,7 +13,7 @@ import { describe, expect, it } from 'vitest'
 
 declare module 'cordis' {
   interface Events {
-    'ping'(...args: any[]): void
+    'ping'(...args: unknown[]): void
     'seq'(): void
     'boom'(): void
   }
