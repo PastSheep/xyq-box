@@ -126,6 +126,71 @@ export const CARDS = [
     '为 E:\\Projects\\xyq-box 生成开发进度报告：git log --oneline -10、git status、docs/06 里程碑勾选状态、\n' +
       'CI/测试状态（若可查）。输出结构化摘要：已完成 / 进行中 / 阻塞项与下一步建议。只读，不修改文件。',
     { permission: 'read-only', status: 'backlog', schedule: { enabled: true, cron: '0 23 * * *' } }),
+
+  // ──── M1：Web 壳与 UI 扩展点（docs/06） ────
+
+  card('m1-01-shell-web', 'M1 · Web 壳插件',
+    'plugin-shell-web：Vite 部署入口 + 内核 bootstrap + 默认清单 + root slot 渲染。',
+    '在 E:\\Projects\\xyq-box 实现 @xyq-box/plugin-shell-web（packages/plugins/shell-web）：\n' +
+      '1. Vite 部署入口：调用 kernel.bootstrap() 启动内核，加载默认插件清单（plugins.json）；\n' +
+      '2. 占据 root slot，渲染 React UI 根；\n' +
+      '3. 提供 system 服务（window/document/notification 等浏览器能力）；\n' +
+      '4. 与 plugin-views 配合汇聚所有已注册视图。\n' +
+      '完成后 git add -A && git commit -m \'feat: M1 Web 壳\' && git push。',
+    { permission: 'workspace-write' }),
+
+  card('m1-02-views-layout', 'M1 · 面板系统',
+    'plugin-views + plugin-layout：UI 扩展点注册/聚合 + 拖拽停靠/折叠/布局持久化。',
+    '在 E:\\Projects\\xyq-box 实现 plugin-views 与 plugin-layout（packages/plugins/views、layout）：\n' +
+      '1. ctx.views.register(descriptor) 注册视图描述符（effect 语义，卸载自动撤销）；\n' +
+      '2. ctx.views.list(slot) 与 onChange 订阅；\n' +
+      '3. plugin-layout 占据 root slot，渲染面板容器（拖拽停靠、折叠、布局持久化）；\n' +
+      '4. 支持 slot：sidebar / panel / toolbar / statusbar。\n' +
+      '完成后 git add -A && git commit -m \'feat: M1 面板系统\' && git push。',
+    { permission: 'workspace-write' }),
+
+  card('m1-03-commands', 'M1 · 命令面板',
+    'plugin-commands + plugin-command-palette：命令注册/快捷键/命令面板 UI。',
+    '在 E:\\Projects\\xyq-box 实现 plugin-commands 与 plugin-command-palette（packages/plugins/commands、command-palette）：\n' +
+      '1. ctx.commands.register(command) 注册命令（title/shortcut/run/when）；\n' +
+      '2. ctx.commands.run(id) 执行命令；\n' +
+      '3. command-palette 插件：Ctrl+K 弹出搜索/执行面板。\n' +
+      '完成后 git add -A && git commit -m \'feat: M1 命令面板\' && git push。',
+    { permission: 'workspace-write' }),
+
+  card('m1-04-settings', 'M1 · 设置 UI',
+    'plugin-config + plugin-settings：schema 驱动的配置读写与设置界面。',
+    '在 E:\\Projects\\xyq-box 实现 plugin-config 与 plugin-settings（packages/plugins/config、settings）：\n' +
+      '1. ctx.config 服务：按插件名分片读写、onChange 订阅、变更即热重载（HMR 语义）；\n' +
+      '2. settings 插件：按插件 Config schema 自动生成设置表单 UI；\n' +
+      '3. 持久化委托 storage 服务。\n' +
+      '完成后 git add -A && git commit -m \'feat: M1 设置 UI\' && git push。',
+    { permission: 'workspace-write' }),
+
+  card('m1-05-diagnostics', 'M1 · 诊断面板',
+    'plugin-diagnostics：插件实时状态面板（fiber 状态、依赖图、日志）。',
+    '在 E:\\Projects\\xyq-box 实现 plugin-diagnostics（packages/plugins/diagnostics）：\n' +
+      '1. 订阅内核诊断接口（getStatus / fiber 事件）；\n' +
+      '2. 渲染面板：插件列表（名称/状态/状态标签/依赖/错误）；\n' +
+      '3. 日志实时流（消费 logger 的环形缓冲 sink）；\n' +
+      '4. 依赖图可视化（可选）。\n' +
+      '完成后 git add -A && git commit -m \'feat: M1 诊断面板\' && git push。',
+    { permission: 'workspace-write' }),
+
+  card('m1-06-acceptance', 'M1 · 验收（只读）',
+    '第三方风格插件经本地目录安装、热重载、卸载，全程不动壳代码。',
+    '在 E:\\Projects\\xyq-box 做只读验收：\n' +
+      '1. 一个结构完整的第三方风格插件（带 xyqBox manifest + 权限声明）经本地目录安装；\n' +
+      '2. 热重载生效；\n' +
+      '3. 卸载后 UI 恢复原状；\n' +
+      '4. 全程不动壳代码（plugin-shell-web 零修改）。\n' +
+      '输出验收报告，不修改文件。',
+    { permission: 'read-only' }),
+
+  card('m1-07-daily-report', '定时 · 每晚 M1 进度报告',
+    '每晚 23:00 自动生成 M1 开发进度报告（cron 0 23 * * *，只读）。',
+    '为 E:\\Projects\\xyq-box 生成 M1 开发进度报告：git log --oneline -10、git status、看板 M1 卡片状态、已实现/未实现对照 docs/06 M1 清单。只读，不修改文件。',
+    { permission: 'read-only', status: 'backlog', schedule: { enabled: true, cron: '0 23 * * *' } }),
 ]
 
 /** 校验全部卡片；返回非法卡片 id 列表（空 = 全通过）。 */
