@@ -33,6 +33,9 @@
       }
     },
     {
+      "name": "@xyq-box/plugin-diagnostics"
+    },
+    {
       "name": "@xyq-box/plugin-settings"
     }
   ]

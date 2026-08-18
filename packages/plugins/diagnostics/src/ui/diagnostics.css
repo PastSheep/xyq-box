@@ -1,0 +1,281 @@
+/* @xyq-box/plugin-diagnostics —— 诊断面板样式 */
+
+.xyq-diag {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--xyq-fg, #222);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: auto;
+  height: 100%;
+}
+
+.xyq-diag-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.xyq-diag-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.xyq-diag-count {
+  color: var(--xyq-fg-dim, #888);
+  font-size: 12px;
+}
+
+.xyq-diag-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--xyq-border, #ddd);
+}
+
+.xyq-diag-tab {
+  padding: 4px 12px;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  background: transparent;
+  color: var(--xyq-fg-dim, #666);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.xyq-diag-tab:hover {
+  background: var(--xyq-bg-hover, rgba(0, 0, 0, 0.04));
+}
+
+.xyq-diag-tab--active {
+  border-color: var(--xyq-border, #ddd);
+  background: var(--xyq-bg, #fff);
+  color: var(--xyq-fg, #222);
+  font-weight: 600;
+}
+
+/* ─── 插件列表 ─────────────────────────────────────────────────────────── */
+
+.xyq-diag-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.xyq-diag-table th,
+.xyq-diag-table td {
+  text-align: left;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--xyq-border, #eee);
+  vertical-align: top;
+}
+
+.xyq-diag-table th {
+  font-weight: 600;
+  color: var(--xyq-fg-dim, #666);
+  white-space: nowrap;
+}
+
+.xyq-diag-name {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  word-break: break-all;
+}
+
+.xyq-diag-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.xyq-diag-badge--active {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.xyq-diag-badge--pending {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.xyq-diag-badge--failed {
+  background: #fdecea;
+  color: #c0392b;
+}
+
+.xyq-diag-badge--loading,
+.xyq-diag-badge--unloading {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.xyq-diag-badge--disposed,
+.xyq-diag-badge--unknown {
+  background: #eceff1;
+  color: #607d8b;
+}
+
+.xyq-diag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.xyq-diag-chip {
+  padding: 0 6px;
+  border: 1px solid var(--xyq-border, #ddd);
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
+  color: var(--xyq-fg-dim, #555);
+  background: var(--xyq-bg, #fff);
+}
+
+.xyq-diag-error {
+  color: #c0392b;
+  font-size: 11px;
+  word-break: break-all;
+}
+
+.xyq-diag-empty {
+  color: var(--xyq-fg-dim, #888);
+  padding: 12px;
+  font-size: 12px;
+}
+
+/* ─── 日志流 ───────────────────────────────────────────────────────────── */
+
+.xyq-diag-log {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  background: var(--xyq-bg-code, #fafafa);
+  border: 1px solid var(--xyq-border, #eee);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.xyq-diag-log__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--xyq-border, #eee);
+  background: var(--xyq-bg, #fff);
+}
+
+.xyq-diag-log__toolbar label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--xyq-fg-dim, #666);
+  cursor: pointer;
+}
+
+.xyq-diag-log__body {
+  overflow: auto;
+  max-height: 320px;
+  padding: 4px 0;
+}
+
+.xyq-diag-log__row {
+  display: flex;
+  gap: 8px;
+  padding: 1px 8px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.xyq-diag-log__row:hover {
+  background: var(--xyq-bg-hover, rgba(0, 0, 0, 0.03));
+}
+
+.xyq-diag-log__time {
+  color: var(--xyq-fg-dim, #999);
+  flex-shrink: 0;
+}
+
+.xyq-diag-log__level {
+  flex-shrink: 0;
+  width: 42px;
+  font-weight: 600;
+}
+
+.xyq-diag-log__level--debug {
+  color: #78909c;
+}
+.xyq-diag-log__level--info {
+  color: #1565c0;
+}
+.xyq-diag-log__level--warn {
+  color: #ef6c00;
+}
+.xyq-diag-log__level--error {
+  color: #c0392b;
+}
+
+.xyq-diag-log__scope {
+  color: #8e24aa;
+  flex-shrink: 0;
+}
+
+.xyq-diag-log__text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ─── 依赖图 ───────────────────────────────────────────────────────────── */
+
+.xyq-diag-graph {
+  border: 1px solid var(--xyq-border, #eee);
+  border-radius: 6px;
+  background: var(--xyq-bg-code, #fafafa);
+  overflow: auto;
+  text-align: center;
+}
+
+.xyq-diag-graph__node {
+  fill: #fff;
+  stroke: #90a4ae;
+  stroke-width: 1;
+}
+
+.xyq-diag-graph__node--active {
+  stroke: #2e7d32;
+}
+
+.xyq-diag-graph__node--pending {
+  stroke: #ef6c00;
+}
+
+.xyq-diag-graph__node--failed {
+  stroke: #c0392b;
+}
+
+.xyq-diag-graph__label {
+  font-size: 9px;
+  fill: #222;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  pointer-events: none;
+}
+
+.xyq-diag-graph__edge {
+  stroke: #90a4ae;
+  stroke-width: 1;
+  fill: none;
+  marker-end: url(#xyq-diag-arrow);
+}
+
+.xyq-diag-graph__edge--service {
+  stroke: #b0bec5;
+  stroke-dasharray: 3 3;
+}
