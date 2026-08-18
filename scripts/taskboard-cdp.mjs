@@ -35,10 +35,10 @@ async function listTargets() {
   return res.json()
 }
 
-/** 找 3080 页面 target（type=page 且 URL 含 :3080）。 */
+/** 找 3080 GUI target（URL 含 :3080；实际为外层 page 内的 iframe）。 */
 async function findPageTarget() {
   const targets = await listTargets()
-  const page = targets.find((t) => t.type === 'page' && t.url.includes(TARGET_MARK))
+  const page = targets.find((t) => (t.type === 'page' || t.type === 'iframe') && t.url.includes(TARGET_MARK))
   if (!page) {
     log('[taskboard-cdp] 未找到 3080 页面 target，当前 targets：')
     for (const t of targets) log('  -', t.type, t.url, t.webSocketDebuggerUrl ?? '')
