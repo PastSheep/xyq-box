@@ -44,6 +44,18 @@ function toScopedName(name: string): string {
   return '@xyq-box/plugin-' + name
 }
 
+/** kebab-case → PascalCase（test-plugin → TestPlugin） */
+function kebabToPascal(s: string): string {
+  return s.split('-').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join('')
+}
+
+/** kebab-case → camelCase（test-plugin → testPlugin） */
+function kebabToCamel(s: string): string {
+  const parts = s.split('-')
+  const first = parts[0]!
+  return first + parts.slice(1).map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join('')
+}
+
 // ─── Verify ──────────────────────────────────────────────────────────────────
 
 interface VerifyResult {
@@ -192,7 +204,9 @@ function createPlugin(dir: string, opts: CreateOptions, isPackagePlugin: boolean
   const description = opts.description ?? name + ' 插件'
   const author = opts.author ?? 'xyq-box team'
   const pkgName = opts.scopedName ?? toScopedName(name)
-  const relToRoot = isPackagePlugin ? '../..' : '..'
+  const pascalName = kebabToPascal(name)
+  const camelName = kebabToCamel(name)
+  const relToRoot = isPackagePlugin ? '../../..' : '..'
 
   // 创建目录结构
   mkdirSync(resolve(dir, 'src'), { recursive: true })
@@ -275,11 +289,11 @@ function createPlugin(dir: string, opts: CreateOptions, isPackagePlugin: boolean
   writeFileSync(resolve(dir, 'tsconfig.build.json'), JSON.stringify(tsbuild, null, 2) + '\n')
 
   // src/index.ts
-  const src = buildPluginSrc(name, pkgName, description)
+  const src = buildPluginSrc(name, pkgName, description, pascalName, camelName)
   writeFileSync(resolve(dir, 'src', 'index.ts'), src + '\n')
 
   // tests/index.spec.ts
-  const testFile = buildPluginTest(name, pkgName)
+  const testFile = buildPluginTest(name, pkgName, camelName)
   writeFileSync(resolve(dir, 'tests', 'index.spec.ts'), testFile + '\n')
 
   // README.md
@@ -306,7 +320,7 @@ function createPlugin(dir: string, opts: CreateOptions, isPackagePlugin: boolean
 }
 
 /** 生成 src/index.ts */
-function buildPluginSrc(name: string, pkgName: string, description: string): string {
+function buildPluginSrc(name: string, pkgName: string, description: string, pascalName: string, camelName: string): string {
   return [
     "import { Context, Service } from 'cordis'",
     "import Schema from 'schemastery'",
@@ -330,16 +344,16 @@ function buildPluginSrc(name: string, pkgName: string, description: string): str
     '',
     '// ─── 服务契约 ──────────────────────────────────────────────────────────────',
     '',
-    'export interface ' + name + 'Service {',
+    'export interface ' + pascalName + 'Service {',
     '  /** 示例方法 */',
     '  ping(): string',
     '}',
     '',
-    'export class ' + name + 'ServiceImpl extends Service implements ' + name + 'Service {',
+    'export class ' + pascalName + 'ServiceImpl extends Service implements ' + pascalName + 'Service {',
     "  private logger: ReturnType<Context['logger']>",
     '',
     '  constructor(ctx: Context, private config: Config) {',
-    "    super(ctx, '" + name + "')",
+    "    super(ctx, '" + camelName + "')",
     "    this.logger = ctx.logger('" + name + "')",
     "    this.logger.info('service created')",
     '  }',
@@ -354,7 +368,7 @@ function buildPluginSrc(name: string, pkgName: string, description: string): str
     '',
     "declare module 'cordis' {",
     '  interface Context {',
-    '    ' + name + ': ' + name + 'Service',
+    '    ' + camelName + ': ' + pascalName + 'Service',
     '  }',
     '}',
     '',
@@ -362,14 +376,14 @@ function buildPluginSrc(name: string, pkgName: string, description: string): str
     '',
     "export const name = '" + pkgName + "'",
     "export const inject = ['logger']",
-    "export const provide = ['" + name + "']",
+    "export const provide = ['" + camelName + "']",
     '',
     'export function apply(ctx: Context, config: Config) {',
     "  const logger = ctx.logger('" + name + "')",
     "  logger.info('plugin loaded')",
     '',
     '  // 注册服务（Service 构造器即 effect 语义注册，卸载时自动撤销）',
-    '  new ' + name + 'ServiceImpl(ctx, config)',
+    '  new ' + pascalName + 'ServiceImpl(ctx, config)',
     '',
     '  ctx.effect(() => {',
     "    logger.info('plugin activated')",
@@ -382,7 +396,7 @@ function buildPluginSrc(name: string, pkgName: string, description: string): str
 }
 
 /** 生成 tests/index.spec.ts */
-function buildPluginTest(name: string, pkgName: string): string {
+function buildPluginTest(name: string, pkgName: string, camelName: string): string {
   return [
     '/**',
     ' * ' + pkgName + ' —— 单测',
@@ -410,8 +424,8 @@ function buildPluginTest(name: string, pkgName: string): string {
     '    const ctx = createContext()',
     '    const fiber = await ctx.plugin(plugin, defaultConfig)',
     '    expect(fiber.state).toBe(FiberState.ACTIVE)',
-    '    expect(ctx.' + name + ').toBeDefined()',
-    "    expect(ctx." + name + ".ping()).toBe('pong')",
+    '    expect(ctx.' + camelName + ').toBeDefined()',
+    "    expect(ctx." + camelName + ".ping()).toBe('pong')",
     '    await fiber.dispose()',
     '  })',
     '',
@@ -420,17 +434,17 @@ function buildPluginTest(name: string, pkgName: string): string {
     '    const fiber = await ctx.plugin(plugin, defaultConfig)',
     '    await fiber.dispose()',
     '    expect(fiber.state).toBe(FiberState.DISPOSED)',
-    "    expect(ctx.get('" + name + "')).toBeUndefined()",
+    "    expect(ctx.get('" + camelName + "')).toBeUndefined()",
     '  })',
     '',
     "  it('重载：restart 后服务仍可用', async () => {",
     '    const ctx = createContext()',
     '    const fiber = await ctx.plugin(plugin, defaultConfig)',
-    "    expect(ctx." + name + ".ping()).toBe('pong')",
+    "    expect(ctx." + camelName + ".ping()).toBe('pong')",
     '    await fiber.restart()',
     '    expect(fiber.state).toBe(FiberState.ACTIVE)',
-    '    expect(ctx.' + name + ').toBeDefined()',
-    "    expect(ctx." + name + ".ping()).toBe('pong')",
+    '    expect(ctx.' + camelName + ').toBeDefined()',
+    "    expect(ctx." + camelName + ".ping()).toBe('pong')",
     '    await fiber.dispose()',
     '  })',
     '})',
