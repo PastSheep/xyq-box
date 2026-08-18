@@ -19,8 +19,10 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "cordis": "4.0.0-rc.8",
     "schemastery": "^3.18.0"
+  },
+  "peerDependencies": {
+    "cordis": "4.0.0-rc.8"
   },
   "devDependencies": {
     "@standard-schema/spec": "^1.1.0"

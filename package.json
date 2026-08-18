@@ -19,6 +19,9 @@
     "format:check": "prettier --check .",
     "xyq": "pnpm --filter @xyq-box/xyq run cli"
   },
+  "dependencies": {
+    "cordis": "4.0.0-rc.8"
+  },
   "devDependencies": {
     "@changesets/cli": "^3.0.0",
     "@types/node": "^24.0.0",
