@@ -27,7 +27,11 @@ export const version = '0.1.0'
  * ```
  */
 export async function bootstrap(options: BootstrapOptions = {}): Promise<KernelHandle> {
-  const { profile = 'default', basePath = process.cwd() } = options
+  const { profile = 'default' } = options
+  // basePath 缺省：Node 端取 process.cwd()，浏览器端（无 process）退回 '/'
+  const basePath =
+    options.basePath ??
+    (typeof process !== 'undefined' && typeof process.cwd === 'function' ? process.cwd() : '/')
 
   // 1. 创建 Cordis 根上下文
   const ctx = new Context()
@@ -36,8 +40,11 @@ export async function bootstrap(options: BootstrapOptions = {}): Promise<KernelH
   // 2. 注册内置 service（connection 是内核与部署入口的通信契约，docs/04 §8）
   provideConnection(ctx)
 
-  // 3. 创建插件管理器
-  const plugins = createPluginManager(ctx, basePath)
+  // 3. 创建插件管理器（浏览器端注入清单来源与模块加载器，见 BootstrapOptions）
+  const plugins = createPluginManager(ctx, basePath, {
+    manifest: options.manifest,
+    loader: options.loader,
+  })
 
   // 4. 读取插件清单并装载默认插件集
   await plugins.loadManifest()

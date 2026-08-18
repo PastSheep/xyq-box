@@ -7,7 +7,7 @@
 
 export { bootstrap, version } from './bootstrap.js'
 export { ConnectionServiceImpl, provideConnection } from './connection.js'
-export { createPluginManager } from './plugin-manager.js'
+export { createPluginManager, type PluginManagerOptions } from './plugin-manager.js'
 export {
   MANIFEST_FILE,
   type BootstrapOptions,

@@ -17,7 +17,8 @@
     "changeset": "changeset",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "xyq": "pnpm --filter @xyq-box/xyq run cli"
+    "xyq": "pnpm --filter @xyq-box/xyq run cli",
+    "dev": "pnpm --filter @xyq-box/plugin-shell-web dev"
   },
   "dependencies": {
     "cordis": "4.0.0-rc.8"

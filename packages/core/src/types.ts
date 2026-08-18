@@ -13,8 +13,20 @@ import type { FiberState } from 'cordis'
 export interface BootstrapOptions {
   /** 配置 profile 名（决定 plugins.json 加载路径），默认 'default' */
   profile?: string
-  /** 应用根路径（用于解析相对路径 local-plugins/*），默认 process.cwd() */
+  /** 应用根路径（用于解析相对路径 local-plugins/*），默认 process.cwd()（Node）或 '/'（浏览器） */
   basePath?: string
+  /**
+   * 插件清单来源（可选）。
+   * 缺省：从 basePath/plugins.json 读取（Node 端）。
+   * 浏览器端：Vite 部署入口把打包进产物的清单直接传入（或传入加载函数）。
+   */
+  manifest?: PluginManifest | (() => Promise<PluginManifest>)
+  /**
+   * 插件模块加载器（可选）。
+   * 缺省：动态 import（Node 端）。
+   * 浏览器端：由 Vite 生成的「插件名 → 动态 import」注册表驱动（见 plugin-shell-web 的 vite 插件）。
+   */
+  loader?: (name: string) => Promise<Record<string, unknown>>
 }
 
 // ─── 插件清单（plugins.json） ────────────────────────────────────────────────
@@ -81,9 +93,7 @@ export interface PluginStatus {
 
 // ─── Connection 服务（内核内置 RPC 桥，docs/04 §8） ──────────────────────────
 
-export type RpcResult =
-  | { ok: true; value: unknown }
-  | { ok: false; error: string }
+export type RpcResult = { ok: true; value: unknown } | { ok: false; error: string }
 
 export interface RpcHandler {
   /** 注册端点（effect 语义，插件卸载自动撤销） */

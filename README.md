@@ -16,16 +16,19 @@
 
 ## 文档地图
 
-| 文档 | 内容 |
-| --- | --- |
-| [docs/01-总览与理念.md](docs/01-总览与理念.md) | 项目定位、理念、目标与非目标 |
-| [docs/02-架构设计.md](docs/02-架构设计.md) | 分层架构、运行时模型、双端（node/web）与 RPC、UI 扩展点、安全模型 |
-| [docs/03-插件规范.md](docs/03-插件规范.md) | 插件包结构、manifest、入口约定、服务契约、配置 schema、分发与版本兼容 |
-| [docs/04-核心服务设计.md](docs/04-核心服务设计.md) | config / logger / storage / views / commands / permissions 等核心服务接口草案 |
-| [docs/05-技术选型与仓库结构.md](docs/05-技术选型与仓库结构.md) | 依赖选型、monorepo 布局、工具链与 CI |
-| [docs/06-里程碑与开放问题.md](docs/06-里程碑与开放问题.md) | M0–M4 路线图与决策记录（ADR） |
-| [docs/07-任务看板协作方案.md](docs/07-任务看板协作方案.md) | 用 DSH 任务看板驱动项目开发：卡片种子、执行目标、定时任务 |
+| 文档                                                           | 内容                                                                          |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [docs/01-总览与理念.md](docs/01-总览与理念.md)                 | 项目定位、理念、目标与非目标                                                  |
+| [docs/02-架构设计.md](docs/02-架构设计.md)                     | 分层架构、运行时模型、双端（node/web）与 RPC、UI 扩展点、安全模型             |
+| [docs/03-插件规范.md](docs/03-插件规范.md)                     | 插件包结构、manifest、入口约定、服务契约、配置 schema、分发与版本兼容         |
+| [docs/04-核心服务设计.md](docs/04-核心服务设计.md)             | config / logger / storage / views / commands / permissions 等核心服务接口草案 |
+| [docs/05-技术选型与仓库结构.md](docs/05-技术选型与仓库结构.md) | 依赖选型、monorepo 布局、工具链与 CI                                          |
+| [docs/06-里程碑与开放问题.md](docs/06-里程碑与开放问题.md)     | M0–M4 路线图与决策记录（ADR）                                                 |
+| [docs/07-任务看板协作方案.md](docs/07-任务看板协作方案.md)     | 用 DSH 任务看板驱动项目开发：卡片种子、执行目标、定时任务                     |
 
 ## 当前状态
 
-设计阶段已完成：ADR D1–D6 全部定案（cordis `4.0.0-rc.8` 精确锁版 + 契约测试；桌面壳 Electron；UI 框架 React 18；配置 JSON；复用 cordis-loader；库 tsc / 壳 Vite）。下一步：启动 M0（仓库脚手架 + 内核 + SDK + 契约测试 + 示例插件），详见 [06-里程碑与开放问题](docs/06-里程碑与开放问题.md)。
+- **M0（内核骨架）✅**：仓库脚手架、`@xyq-box/core`（bootstrap + 插件管理器 + connection 服务）、`@xyq-box/sdk`（defineView/definePlugin）、`plugin-hello` 示例、`xyq create/verify` 命令；
+- **M1（Web 壳，进行中）**：`@xyq-box/plugin-shell-web` ✅（Vite 部署入口 + 内核 bootstrap + 默认清单 + root slot 渲染 + system 服务 + 视图聚合）；面板系统 / 命令面板 / 设置 UI / 诊断面板 待实现。
+
+详见 [06-里程碑与开放问题](docs/06-里程碑与开放问题.md)。

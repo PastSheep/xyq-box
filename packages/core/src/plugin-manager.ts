@@ -3,10 +3,13 @@
  *
  * 职责：插件清单加载、装载/卸载/热重载、fiber 状态诊断。
  * 实现 docs/02 §2 与 §7 的插件管理语义。
+ *
+ * 浏览器适配（M1，plugin-shell-web 需要）：
+ * - 清单来源可注入（options.manifest）：浏览器端由 Vite 打包进产物的 plugins.json 直接传入，
+ *   避免依赖 node:fs；Node 端缺省仍从 basePath/plugins.json 读取；
+ * - 模块加载器可注入（options.loader）：浏览器端由 Vite 的「插件名 → 动态 import」注册表驱动；
+ * - node:fs / node:path 改为惰性动态导入，浏览器打包时不在模块顶层引入 Node 内建。
  */
-
-import { readFile } from 'node:fs/promises'
-import { resolve } from 'node:path'
 
 import type { Context, Plugin } from 'cordis'
 
@@ -27,7 +30,31 @@ const STATE_LABELS: Record<number, string> = {
   [5]: 'UNLOADING',
 }
 
-export function createPluginManager(ctx: Context, basePath: string): PluginManager {
+/** 插件管理器创建选项（浏览器端注入清单来源与模块加载器） */
+export interface PluginManagerOptions {
+  /** 清单来源：直接值或加载函数；缺省从 basePath/plugins.json 读取 */
+  manifest?: PluginManifest | (() => Promise<PluginManifest>)
+  /** 插件模块加载器；缺省用动态 import */
+  loader?: (name: string) => Promise<Record<string, unknown>>
+}
+
+/** 规范化清单条目（兼容字符串与对象两种格式） */
+function normalizeManifest(manifest: PluginManifest): PluginManifest {
+  if (!Array.isArray(manifest.plugins)) {
+    manifest.plugins = []
+  }
+  manifest.plugins = manifest.plugins.map((entry) => {
+    if (typeof entry === 'string') return { name: entry }
+    return entry
+  }) as PluginManifest['plugins']
+  return manifest
+}
+
+export function createPluginManager(
+  ctx: Context,
+  basePath: string,
+  options: PluginManagerOptions = {},
+): PluginManager {
   /** 已装载的插件名 → Fiber 映射（用于快速查找） */
   const mountedFibers = new Map<string, import('cordis').Fiber>()
 
@@ -36,21 +63,28 @@ export function createPluginManager(ctx: Context, basePath: string): PluginManag
 
   const manager: PluginManager = {
     async loadManifest(): Promise<PluginManifest> {
+      if (options.manifest) {
+        // 注入的清单来源（浏览器端）
+        manifest = normalizeManifest(
+          typeof options.manifest === 'function' ? await options.manifest() : options.manifest,
+        )
+        return manifest
+      }
+
+      // Node 端：从 basePath/plugins.json 读取（惰性导入 node:fs，浏览器打包不加载）
+      const { readFile } = await import('node:fs/promises')
+      const { resolve } = await import('node:path')
       const manifestPath = resolve(basePath, MANIFEST_FILE)
       try {
         const content = await readFile(manifestPath, 'utf-8')
-        manifest = JSON.parse(content) as PluginManifest
-        // 兼容 list 格式（只含 name 字符串）和对象格式
-        if (!Array.isArray(manifest.plugins)) {
-          manifest.plugins = []
-        }
-        manifest.plugins = manifest.plugins.map((entry) => {
-          if (typeof entry === 'string') return { name: entry }
-          return entry
-        }) as PluginManifest['plugins']
+        manifest = normalizeManifest(JSON.parse(content) as PluginManifest)
         return manifest
       } catch (error: unknown) {
-        if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
+        if (
+          error instanceof Error &&
+          'code' in error &&
+          (error as NodeJS.ErrnoException).code === 'ENOENT'
+        ) {
           manifest = { plugins: [] }
           return manifest
         }
@@ -59,7 +93,7 @@ export function createPluginManager(ctx: Context, basePath: string): PluginManag
     },
 
     async mountAll(): Promise<void> {
-      const m = manifest ?? await manager.loadManifest()
+      const m = manifest ?? (await manager.loadManifest())
       for (const entry of m.plugins) {
         if (mountedFibers.has(entry.name)) continue
         try {
@@ -76,12 +110,12 @@ export function createPluginManager(ctx: Context, basePath: string): PluginManag
       }
 
       // 查找清单中对应的配置
-      const m = manifest ?? await manager.loadManifest()
+      const m = manifest ?? (await manager.loadManifest())
       const entry = m.plugins.find((p) => p.name === name)
       const config = entry?.config ?? {}
 
-      // 动态加载插件模块
-      const pluginModule = await loadPluginModule(name, basePath)
+      // 动态加载插件模块（注入的 loader 优先，缺省用动态 import）
+      const pluginModule = await loadPluginModule(name, basePath, options)
       const plugin = resolvePluginExport(pluginModule)
 
       // 装载插件
@@ -103,14 +137,20 @@ export function createPluginManager(ctx: Context, basePath: string): PluginManag
     },
 
     async reload(name: string): Promise<void> {
-      const fiber = mountedFibers.get(name)
-      if (!fiber) {
+      if (!mountedFibers.has(name)) {
         ctx.logger.warn(`[plugin-manager] '${name}' is not mounted, cannot reload`)
         return
       }
-      // Cordis 的 restart 实现热重载（卸载→重新装载）
+      // 热重载 = 卸载后重新装载：重新解析插件模块（浏览器端经 Vite HMR 拿到新代码），
+      // 再以新模块身份 mount —— 与 Cordis 的 restart（同模块重跑 apply）相比，
+      // 能拾取模块级代码变更（内核 HMR 语义，docs/06 M1）。
       ctx.logger.info(`[plugin-manager] reloading '${name}'`)
-      await fiber.restart()
+      try {
+        await manager.unmount(name)
+        await manager.mount(name)
+      } catch (error) {
+        ctx.logger.warn(`[plugin-manager] reload failed for '${name}':`, error)
+      }
       ctx.logger.info(`[plugin-manager] reloaded '${name}'`)
     },
 
@@ -153,17 +193,27 @@ export function createPluginManager(ctx: Context, basePath: string): PluginManag
 
 /**
  * 动态加载插件模块。
- * 支持 npm 包名（如 '@xyq-box/plugin-logger'）和相对路径（如 './local-plugins/my-thing'）。
+ * 支持：
+ * - 注入的 loader（浏览器端：Vite 注册表）；
+ * - npm 包名（如 '@xyq-box/plugin-logger'，Node 端动态 import）；
+ * - 相对/绝对路径（如 './local-plugins/my-thing'，Node 端从 basePath 解析）。
  */
-async function loadPluginModule(name: string, basePath: string): Promise<Record<string, unknown>> {
+async function loadPluginModule(
+  name: string,
+  basePath: string,
+  options: PluginManagerOptions,
+): Promise<Record<string, unknown>> {
+  if (options.loader) {
+    return await options.loader(name)
+  }
   if (name.startsWith('.') || name.startsWith('/')) {
-    // 相对路径或绝对路径：从本地文件系统加载
+    // 相对路径或绝对路径：从本地文件系统加载（惰性导入 node:path）
+    const { resolve } = await import('node:path')
     const resolvedPath = resolve(basePath, name)
     return await import(resolvedPath)
-  } else {
-    // npm 包名：直接动态 import
-    return await import(name)
   }
+  // npm 包名：直接动态 import
+  return await import(name)
 }
 
 /**

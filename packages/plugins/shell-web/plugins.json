@@ -1,0 +1,18 @@
+{
+  "plugins": [
+    { "name": "@xyq-box/plugin-logger" },
+    { "name": "@xyq-box/plugin-config" },
+    { "name": "@xyq-box/plugin-storage" },
+    { "name": "@xyq-box/plugin-views" },
+    { "name": "@xyq-box/plugin-commands" },
+    { "name": "@xyq-box/plugin-hello" },
+    {
+      "name": "@xyq-box/plugin-shell-web",
+      "config": {
+        "mountPoint": "root",
+        "title": "xyq-box",
+        "showKernelStatus": true
+      }
+    }
+  ]
+}
